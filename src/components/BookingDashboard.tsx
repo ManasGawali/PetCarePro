@@ -5,6 +5,8 @@ import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Textarea } from './ui/textarea';
 import { 
   Calendar,
   Clock,
@@ -17,7 +19,12 @@ import {
   MoreVertical,
   CheckCircle,
   Timer,
-  Truck
+  Truck,
+  X,
+  User,
+  Heart,
+  Camera,
+  FileText
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { LiveTracking } from './LiveTracking';
@@ -44,6 +51,14 @@ interface Booking {
   address: string;
   duration: string;
   notes?: string;
+  serviceDetails?: {
+    includes: string[];
+    specialInstructions?: string;
+    completedTasks?: string[];
+    beforePhotos?: string[];
+    afterPhotos?: string[];
+    caregiverNotes?: string;
+  };
 }
 
 const mockBookings: Booking[] = [
@@ -65,9 +80,13 @@ const mockBookings: Booking[] = [
       rating: 4.9,
       phone: '+1 (555) 123-4567'
     },
-    price: 75,
+    price: 6000,
     address: '123 Main St, City, State',
-    duration: '1.5 hours'
+    duration: '1.5 hours',
+    serviceDetails: {
+      includes: ['Full bath & dry', 'Professional haircut', 'Nail trimming', 'Ear cleaning', 'Brush out'],
+      specialInstructions: 'Max is sensitive around his paws, please be gentle during nail trimming.'
+    }
   },
   {
     id: '2',
@@ -87,9 +106,13 @@ const mockBookings: Booking[] = [
       rating: 4.8,
       phone: '+1 (555) 987-6543'
     },
-    price: 25,
+    price: 2000,
     address: '123 Main St, City, State',
-    duration: '1 hour'
+    duration: '1 hour',
+    serviceDetails: {
+      includes: ['30-min walk', 'Fresh water refill', 'Basic health check', 'Photo updates'],
+      specialInstructions: 'Max loves the park on 5th street. Please take the usual route.'
+    }
   },
   {
     id: '3',
@@ -109,9 +132,22 @@ const mockBookings: Booking[] = [
       rating: 5.0,
       phone: '+1 (555) 456-7890'
     },
-    price: 65,
+    price: 5200,
     address: '123 Main St, City, State',
-    duration: '1.5 hours'
+    duration: '1.5 hours',
+    serviceDetails: {
+      includes: ['Basic obedience training', 'Litter box training', 'Behavioral assessment', 'Training plan'],
+      specialInstructions: 'Focus on reducing scratching behavior',
+      completedTasks: [
+        'Assessed Luna\'s current behavior patterns',
+        'Implemented positive reinforcement techniques',
+        'Introduced new scratching posts',
+        'Provided detailed training schedule for owner'
+      ],
+      beforePhotos: ['https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=200&h=200&fit=crop'],
+      afterPhotos: ['https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=200&h=200&fit=crop'],
+      caregiverNotes: 'Luna responded very well to the training session. She\'s quite intelligent and picked up the new commands quickly. I recommend continuing with the daily 10-minute practice sessions as outlined in the training plan.'
+    }
   }
 ];
 
@@ -123,6 +159,11 @@ export function BookingDashboard({ onShowLiveTracking }: BookingDashboardProps) 
   const [activeTab, setActiveTab] = useState('upcoming');
   const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
   const [showLiveTracking, setShowLiveTracking] = useState(false);
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const [selectedBookingForModal, setSelectedBookingForModal] = useState<Booking | null>(null);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
 
   const upcomingBookings = mockBookings.filter(b => b.status === 'upcoming' || b.status === 'in-progress');
   const pastBookings = mockBookings.filter(b => b.status === 'completed' || b.status === 'cancelled');
@@ -150,6 +191,29 @@ export function BookingDashboard({ onShowLiveTracking }: BookingDashboardProps) 
   const handleLiveTrack = (bookingId: string) => {
     setSelectedBooking(bookingId);
     setShowLiveTracking(true);
+  };
+
+  const handleShowDetails = (booking: Booking) => {
+    setSelectedBookingForModal(booking);
+    setDetailsDialogOpen(true);
+  };
+
+  const handleShowReview = (booking: Booking) => {
+    setSelectedBookingForModal(booking);
+    setReviewDialogOpen(true);
+  };
+
+  const handleSubmitReview = () => {
+    // Here you would typically submit the review to your backend
+    console.log('Review submitted:', {
+      bookingId: selectedBookingForModal?.id,
+      rating: reviewRating,
+      review: reviewText
+    });
+    setReviewDialogOpen(false);
+    setReviewText('');
+    setReviewRating(5);
+    setSelectedBookingForModal(null);
   };
 
   if (showLiveTracking) {
@@ -253,7 +317,7 @@ export function BookingDashboard({ onShowLiveTracking }: BookingDashboardProps) 
                                   {getStatusIcon(booking.status)}
                                   <span className="capitalize">{booking.status.replace('-', ' ')}</span>
                                 </Badge>
-                                <span className="text-xl font-bold text-[#6EC18E]">${booking.price}</span>
+                                <span className="text-xl font-bold text-[#6EC18E]">₹{booking.price}</span>
                               </div>
                             </div>
 
@@ -291,7 +355,11 @@ export function BookingDashboard({ onShowLiveTracking }: BookingDashboardProps) 
                               {/* Action Buttons */}
                               <div className="flex items-center space-x-2">
                                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                  <Button variant="outline" size="sm">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => handleShowDetails(booking)}
+                                  >
                                     <Eye className="w-4 h-4 mr-2" />
                                     Details
                                   </Button>
@@ -397,7 +465,7 @@ export function BookingDashboard({ onShowLiveTracking }: BookingDashboardProps) 
                                   {getStatusIcon(booking.status)}
                                   <span className="ml-1 capitalize">{booking.status}</span>
                                 </Badge>
-                                <span className="text-lg font-bold text-[#666666]">${booking.price}</span>
+                                <span className="text-lg font-bold text-[#666666]">₹{booking.price}</span>
                               </div>
                             </div>
 
@@ -420,12 +488,22 @@ export function BookingDashboard({ onShowLiveTracking }: BookingDashboardProps) 
                               </div>
 
                               <div className="flex items-center space-x-2">
-                                <Button variant="ghost" size="sm" className="text-[#666666] hover:text-[#333333]">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="text-[#666666] hover:text-[#333333]"
+                                  onClick={() => handleShowDetails(booking)}
+                                >
                                   <Eye className="w-4 h-4 mr-1" />
                                   View
                                 </Button>
                                 {booking.status === 'completed' && (
-                                  <Button variant="ghost" size="sm" className="text-[#6EC18E] hover:text-[#5BB07F]">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    className="text-[#6EC18E] hover:text-[#5BB07F]"
+                                    onClick={() => handleShowReview(booking)}
+                                  >
                                     <Star className="w-4 h-4 mr-1" />
                                     Review
                                   </Button>
@@ -442,6 +520,254 @@ export function BookingDashboard({ onShowLiveTracking }: BookingDashboardProps) 
             </TabsContent>
           </Tabs>
         </motion.div>
+
+        {/* Details Dialog */}
+        <Dialog open={detailsDialogOpen} onOpenChange={setDetailsDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-[#333333]" style={{ fontFamily: 'var(--font-heading)' }}>
+                Booking Details
+              </DialogTitle>
+            </DialogHeader>
+            
+            {selectedBookingForModal && (
+              <div className="space-y-6">
+                {/* Service Info */}
+                <div className="flex items-start space-x-4">
+                  <div className="w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
+                    <ImageWithFallback
+                      src={selectedBookingForModal.serviceImage}
+                      alt={selectedBookingForModal.serviceName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-[#333333] mb-2">{selectedBookingForModal.serviceName}</h3>
+                    <div className="space-y-1 text-sm text-[#666666]">
+                      <div className="flex items-center">
+                        <Calendar className="w-4 h-4 mr-2" />
+                        {selectedBookingForModal.date} at {selectedBookingForModal.time}
+                      </div>
+                      <div className="flex items-center">
+                        <MapPin className="w-4 h-4 mr-2" />
+                        {selectedBookingForModal.address}
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-2" />
+                        Duration: {selectedBookingForModal.duration}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <Badge className={getStatusColor(selectedBookingForModal.status)}>
+                      {selectedBookingForModal.status.replace('-', ' ')}
+                    </Badge>
+                    <p className="text-xl font-bold text-[#6EC18E] mt-2">₹{selectedBookingForModal.price}</p>
+                  </div>
+                </div>
+
+                {/* Pet & Caregiver Info */}
+                <div className="grid grid-cols-2 gap-4">
+                  <Card className="p-4">
+                    <h4 className="font-semibold mb-3 flex items-center">
+                      <Heart className="w-4 h-4 mr-2 text-[#6EC18E]" />
+                      Pet Information
+                    </h4>
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage src={selectedBookingForModal.pet.image} />
+                        <AvatarFallback>{selectedBookingForModal.pet.name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium text-[#333333]">{selectedBookingForModal.pet.name}</p>
+                        <p className="text-sm text-[#666666]">{selectedBookingForModal.pet.type}</p>
+                      </div>
+                    </div>
+                  </Card>
+
+                  <Card className="p-4">
+                    <h4 className="font-semibold mb-3 flex items-center">
+                      <User className="w-4 h-4 mr-2 text-[#6EC18E]" />
+                      Caregiver
+                    </h4>
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="w-12 h-12">
+                        <AvatarImage src={selectedBookingForModal.caregiver.image} />
+                        <AvatarFallback>{selectedBookingForModal.caregiver.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium text-[#333333]">{selectedBookingForModal.caregiver.name}</p>
+                        <div className="flex items-center text-sm text-[#666666]">
+                          <Star className="w-3 h-3 fill-[#FFD66B] text-[#FFD66B] mr-1" />
+                          {selectedBookingForModal.caregiver.rating} rating
+                        </div>
+                        <p className="text-xs text-[#666666]">{selectedBookingForModal.caregiver.phone}</p>
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+
+                {/* Service Details */}
+                {selectedBookingForModal.serviceDetails && (
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-[#333333] flex items-center">
+                      <FileText className="w-4 h-4 mr-2 text-[#6EC18E]" />
+                      Service Includes
+                    </h4>
+                    <div className="grid grid-cols-2 gap-2">
+                      {selectedBookingForModal.serviceDetails.includes.map((item, index) => (
+                        <div key={index} className="flex items-center space-x-2 text-sm">
+                          <CheckCircle className="w-4 h-4 text-[#6EC18E]" />
+                          <span>{item}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {selectedBookingForModal.serviceDetails.specialInstructions && (
+                      <div>
+                        <h5 className="font-medium text-[#333333] mb-2">Special Instructions</h5>
+                        <p className="text-sm text-[#666666] bg-[#F5F5F5] p-3 rounded-lg">
+                          {selectedBookingForModal.serviceDetails.specialInstructions}
+                        </p>
+                      </div>
+                    )}
+
+                    {/* Completed Service Details */}
+                    {selectedBookingForModal.status === 'completed' && selectedBookingForModal.serviceDetails.completedTasks && (
+                      <div>
+                        <h5 className="font-medium text-[#333333] mb-2">Completed Tasks</h5>
+                        <div className="space-y-2">
+                          {selectedBookingForModal.serviceDetails.completedTasks.map((task, index) => (
+                            <div key={index} className="flex items-start space-x-2 text-sm">
+                              <CheckCircle className="w-4 h-4 text-[#6EC18E] mt-0.5" />
+                              <span>{task}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Photos */}
+                    {selectedBookingForModal.status === 'completed' && (selectedBookingForModal.serviceDetails.beforePhotos || selectedBookingForModal.serviceDetails.afterPhotos) && (
+                      <div>
+                        <h5 className="font-medium text-[#333333] mb-2 flex items-center">
+                          <Camera className="w-4 h-4 mr-2" />
+                          Service Photos
+                        </h5>
+                        <div className="grid grid-cols-2 gap-4">
+                          {selectedBookingForModal.serviceDetails.beforePhotos && (
+                            <div>
+                              <p className="text-sm text-[#666666] mb-2">Before</p>
+                              <div className="grid grid-cols-2 gap-2">
+                                {selectedBookingForModal.serviceDetails.beforePhotos.map((photo, index) => (
+                                  <img key={index} src={photo} alt={`Before ${index + 1}`} className="w-full h-20 object-cover rounded-lg" />
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {selectedBookingForModal.serviceDetails.afterPhotos && (
+                            <div>
+                              <p className="text-sm text-[#666666] mb-2">After</p>
+                              <div className="grid grid-cols-2 gap-2">
+                                {selectedBookingForModal.serviceDetails.afterPhotos.map((photo, index) => (
+                                  <img key={index} src={photo} alt={`After ${index + 1}`} className="w-full h-20 object-cover rounded-lg" />
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Caregiver Notes */}
+                    {selectedBookingForModal.status === 'completed' && selectedBookingForModal.serviceDetails.caregiverNotes && (
+                      <div>
+                        <h5 className="font-medium text-[#333333] mb-2">Caregiver Notes</h5>
+                        <p className="text-sm text-[#666666] bg-[#F5F5F5] p-3 rounded-lg">
+                          {selectedBookingForModal.serviceDetails.caregiverNotes}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Review Dialog */}
+        <Dialog open={reviewDialogOpen} onOpenChange={setReviewDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-[#333333]" style={{ fontFamily: 'var(--font-heading)' }}>
+                Rate Your Experience
+              </DialogTitle>
+            </DialogHeader>
+            
+            {selectedBookingForModal && (
+              <div className="space-y-6">
+                {/* Service & Caregiver Info */}
+                <div className="text-center">
+                  <h3 className="font-semibold text-[#333333] mb-1">{selectedBookingForModal.serviceName}</h3>
+                  <p className="text-sm text-[#666666]">with {selectedBookingForModal.caregiver.name}</p>
+                </div>
+
+                {/* Star Rating */}
+                <div className="text-center">
+                  <p className="text-sm text-[#666666] mb-3">How would you rate this service?</p>
+                  <div className="flex justify-center space-x-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        onClick={() => setReviewRating(star)}
+                        className="transition-colors"
+                      >
+                        <Star 
+                          className={`w-8 h-8 ${star <= reviewRating ? 'fill-[#FFD66B] text-[#FFD66B]' : 'text-gray-300'}`} 
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Review Text */}
+                <div>
+                  <label className="text-sm font-medium text-[#333333] mb-2 block">
+                    Share your experience (optional)
+                  </label>
+                  <Textarea
+                    value={reviewText}
+                    onChange={(e) => setReviewText(e.target.value)}
+                    placeholder="Tell others about your experience with this service..."
+                    className="min-h-[100px]"
+                  />
+                </div>
+
+                {/* Submit Button */}
+                <div className="flex space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setReviewDialogOpen(false);
+                      setReviewText('');
+                      setReviewRating(5);
+                      setSelectedBookingForModal(null);
+                    }}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSubmitReview}
+                    className="flex-1 bg-[#6EC18E] hover:bg-[#5BB07F] text-white"
+                  >
+                    Submit Review
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

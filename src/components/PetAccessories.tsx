@@ -23,8 +23,8 @@ const products = [
     id: '1',
     name: 'Luxury Pet Bed - Memory Foam',
     brand: 'ComfortPaws',
-    price: 89.99,
-    originalPrice: 109.99,
+    price: 7199,
+    originalPrice: 8799,
     rating: 4.8,
     reviews: 156,
     image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop&crop=center',
@@ -38,7 +38,7 @@ const products = [
     id: '2',
     name: 'Interactive Puzzle Toy',
     brand: 'BrainTeasers',
-    price: 24.99,
+    price: 1999,
     rating: 4.6,
     reviews: 89,
     image: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&h=300&fit=crop&crop=center',
@@ -52,7 +52,7 @@ const products = [
     id: '3',
     name: 'Leather Dog Collar - Handcrafted',
     brand: 'ArtisanPets',
-    price: 45.99,
+    price: 3679,
     rating: 4.9,
     reviews: 234,
     image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop&crop=center',
@@ -66,7 +66,7 @@ const products = [
     id: '4',
     name: 'Retractable Dog Leash',
     brand: 'SafeWalk',
-    price: 32.99,
+    price: 2639,
     rating: 4.5,
     reviews: 178,
     image: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop&crop=center',
@@ -80,7 +80,7 @@ const products = [
     id: '5',
     name: 'Cat Scratching Post - Sisal',
     brand: 'ClawCare',
-    price: 67.99,
+    price: 5439,
     rating: 4.7,
     reviews: 123,
     image: 'https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=400&h=300&fit=crop&crop=center',
@@ -94,7 +94,7 @@ const products = [
     id: '6',
     name: 'Elevated Food Bowl Set',
     brand: 'DiningElegance',
-    price: 54.99,
+    price: 4399,
     rating: 4.4,
     reviews: 98,
     image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop&crop=center',
@@ -118,7 +118,7 @@ interface PetAccessoriesProps {
 
 export function PetAccessories({ onAddToCart, cartItemCount, onViewCart }: PetAccessoriesProps) {
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 120]);
+  const [priceRange, setPriceRange] = useState([0, 9600]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedMaterials, setSelectedMaterials] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -339,14 +339,14 @@ export function PetAccessories({ onAddToCart, cartItemCount, onViewCart }: PetAc
                     <Slider
                       value={priceRange}
                       onValueChange={setPriceRange}
-                      max={120}
+                      max={9600}
                       min={0}
-                      step={5}
+                      step={400}
                       className="mb-3"
                     />
                     <div className="flex justify-between text-sm text-[#666666]">
-                      <span>${priceRange[0]}</span>
-                      <span>${priceRange[1]}</span>
+                      <span>₹{priceRange[0]}</span>
+                      <span>₹{priceRange[1]}</span>
                     </div>
                   </div>
                 </motion.div>
@@ -496,9 +496,9 @@ export function PetAccessories({ onAddToCart, cartItemCount, onViewCart }: PetAc
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
-                            <span className="text-xl font-bold text-[#333333]">${product.price}</span>
+                            <span className="text-xl font-bold text-[#333333]">₹{product.price}</span>
                             {product.originalPrice && (
-                              <span className="text-sm text-[#666666] line-through">${product.originalPrice}</span>
+                              <span className="text-sm text-[#666666] line-through">₹{product.originalPrice}</span>
                             )}
                           </div>
                           

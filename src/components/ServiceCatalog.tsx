@@ -33,7 +33,7 @@ const services = [
     description: 'Full-service grooming including bath, haircut, nail trimming, and ear cleaning.',
     icon: Scissors,
     image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop&crop=center',
-    price: 45,
+    price: 3600,
     duration: '1-2 hours',
     rating: 4.9,
     reviews: 234,
@@ -47,7 +47,7 @@ const services = [
     description: 'Daily walks, park visits, and exercise sessions tailored to your pet\'s energy level.',
     icon: Dog,
     image: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=400&h=300&fit=crop&crop=center',
-    price: 25,
+    price: 2000,
     duration: '30-60 mins',
     rating: 4.8,
     reviews: 189,
@@ -61,7 +61,7 @@ const services = [
     description: 'Behavioral training, obedience classes, and specialized training programs.',
     icon: GraduationCap,
     image: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&h=300&fit=crop&crop=center',
-    price: 65,
+    price: 5200,
     duration: '45-90 mins',
     rating: 4.9,
     reviews: 156,
@@ -75,7 +75,7 @@ const services = [
     description: 'In-home health checkups, vaccinations, and medical consultations.',
     icon: Stethoscope,
     image: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?w=400&h=300&fit=crop&crop=center',
-    price: 85,
+    price: 6800,
     duration: '30-45 mins',
     rating: 5.0,
     reviews: 98,
@@ -89,7 +89,7 @@ const services = [
     description: 'Overnight care, feeding, medication administration, and companionship.',
     icon: Heart,
     image: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop&crop=center',
-    price: 35,
+    price: 2800,
     duration: 'Flexible',
     rating: 4.7,
     reviews: 267,
@@ -103,7 +103,7 @@ const services = [
     description: 'Relaxing spa treatments including aromatherapy baths and deep conditioning.',
     icon: Bath,
     image: 'https://images.unsplash.com/photo-1582037929124-98dc74942772?w=400&h=300&fit=crop&crop=center',
-    price: 55,
+    price: 4400,
     duration: '1-1.5 hours',
     rating: 4.8,
     reviews: 145,
@@ -119,7 +119,7 @@ interface ServiceCatalogProps {
 
 export function ServiceCatalog({ onBookService }: ServiceCatalogProps) {
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 100]);
+  const [priceRange, setPriceRange] = useState([0, 8000]);
   const [selectedPetTypes, setSelectedPetTypes] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -288,14 +288,14 @@ export function ServiceCatalog({ onBookService }: ServiceCatalogProps) {
                     <Slider
                       value={priceRange}
                       onValueChange={setPriceRange}
-                      max={150}
+                      max={8000}
                       min={0}
-                      step={5}
+                      step={200}
                       className="mb-3"
                     />
                     <div className="flex justify-between text-sm text-[#666666]">
-                      <span>${priceRange[0]}</span>
-                      <span>${priceRange[1]}</span>
+                      <span>₹{priceRange[0]}</span>
+                      <span>₹{priceRange[1]}</span>
                     </div>
                   </div>
                 </div>
@@ -403,7 +403,7 @@ export function ServiceCatalog({ onBookService }: ServiceCatalogProps) {
 
                           {/* Price */}
                           <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                            <span className="text-sm font-semibold text-[#333333]">From ${service.price}</span>
+                            <span className="text-sm font-semibold text-[#333333]">From ₹{service.price}</span>
                           </div>
                         </div>
 

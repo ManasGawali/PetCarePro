@@ -41,10 +41,10 @@ const mockPets: Pet[] = [
 ];
 
 const addOns = [
-  { id: 'nail-trim', name: 'Nail Trimming', price: 15, description: 'Professional nail trimming and filing' },
-  { id: 'ear-cleaning', name: 'Ear Cleaning', price: 12, description: 'Gentle ear cleaning and inspection' },
-  { id: 'teeth-brushing', name: 'Teeth Brushing', price: 18, description: 'Dental hygiene and breath freshening' },
-  { id: 'premium-shampoo', name: 'Premium Shampoo', price: 25, description: 'Organic, hypoallergenic shampoo treatment' }
+  { id: 'nail-trim', name: 'Nail Trimming', price: 1200, description: 'Professional nail trimming and filing' },
+  { id: 'ear-cleaning', name: 'Ear Cleaning', price: 960, description: 'Gentle ear cleaning and inspection' },
+  { id: 'teeth-brushing', name: 'Teeth Brushing', price: 1440, description: 'Dental hygiene and breath freshening' },
+  { id: 'premium-shampoo', name: 'Premium Shampoo', price: 2000, description: 'Organic, hypoallergenic shampoo treatment' }
 ];
 
 const caregivers = [
@@ -81,7 +81,7 @@ export function BookingFlow({ service, onComplete }: BookingFlowProps) {
     id: 1,
     title: 'Professional Grooming',
     description: 'Full-service grooming including bath, haircut, nail trimming, and ear cleaning for all breeds.',
-    price: 45,
+    price: 3600,
     duration: '1-2 hours',
     rating: 4.9,
     reviews: 234,
@@ -258,7 +258,7 @@ export function BookingFlow({ service, onComplete }: BookingFlowProps) {
                     <div className="flex-1">
                       <h4 className="font-semibold text-[#333333]">{addOn.name}</h4>
                       <p className="text-sm text-[#666666]">{addOn.description}</p>
-                      <p className="text-sm font-semibold text-[#6EC18E] mt-1">+${addOn.price}</p>
+                      <p className="text-sm font-semibold text-[#6EC18E] mt-1">+₹{addOn.price}</p>
                     </div>
                     <Switch
                       checked={selectedAddOns.includes(addOn.id)}
@@ -366,7 +366,7 @@ export function BookingFlow({ service, onComplete }: BookingFlowProps) {
                     <p>Pet: {mockPets.find(p => p.id === selectedPet)?.name}</p>
                     <p>Date: {selectedDate?.toDateString()}</p>
                     <p>Time: {selectedTime}</p>
-                    <p>Total: ${calculateTotal()}</p>
+                    <p>Total: ₹{calculateTotal()}</p>
                   </div>
                 </div>
               </>
@@ -449,7 +449,7 @@ export function BookingFlow({ service, onComplete }: BookingFlowProps) {
                     </div>
                     <div className="text-right">
                       <div className="text-3xl font-bold text-[#6EC18E]" style={{ fontFamily: 'var(--font-heading)' }}>
-                        ${mockService.price}
+                        ₹{mockService.price}
                       </div>
                       <div className="text-sm text-[#666666]">starting price</div>
                     </div>
@@ -584,14 +584,14 @@ export function BookingFlow({ service, onComplete }: BookingFlowProps) {
                   <div className="space-y-2">
                     <div className="flex justify-between text-[#666666]">
                       <span>Service</span>
-                      <span>${mockService.price}</span>
+                      <span>₹{mockService.price}</span>
                     </div>
                     {selectedAddOns.map((addOnId) => {
                       const addOn = addOns.find(a => a.id === addOnId);
                       return addOn ? (
                         <div key={addOnId} className="flex justify-between text-[#666666]">
                           <span>{addOn.name}</span>
-                          <span>+${addOn.price}</span>
+                          <span>+₹{addOn.price}</span>
                         </div>
                       ) : null;
                     })}
@@ -603,7 +603,7 @@ export function BookingFlow({ service, onComplete }: BookingFlowProps) {
                         animate={{ scale: 1 }}
                         transition={{ duration: 0.2 }}
                       >
-                        ${calculateTotal()}
+                        ₹{calculateTotal()}
                       </motion.span>
                     </div>
                   </div>

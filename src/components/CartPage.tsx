@@ -38,7 +38,7 @@ interface CartPageProps {
 
 export function CartPage({ items, onUpdateItem, onContinueShopping }: CartPageProps) {
   const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const deliveryFee = subtotal > 50 ? 0 : 9.99;
+  const deliveryFee = subtotal > 4000 ? 0 : 799;
   const discount = 0; // Could be calculated based on promo code
   const total = subtotal + deliveryFee - discount;
 
@@ -175,9 +175,9 @@ export function CartPage({ items, onUpdateItem, onContinueShopping }: CartPagePr
                           {item.category && <Badge variant="secondary" className="text-xs capitalize">{item.category}</Badge>}
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className="text-lg font-bold text-[#333333]">${item.price}</span>
+                          <span className="text-lg font-bold text-[#333333]">₹{item.price}</span>
                           {item.originalPrice && (
-                            <span className="text-sm text-[#666666] line-through">${item.originalPrice}</span>
+                            <span className="text-sm text-[#666666] line-through">₹{item.originalPrice}</span>
                           )}
                         </div>
                       </div>
@@ -261,7 +261,7 @@ export function CartPage({ items, onUpdateItem, onContinueShopping }: CartPagePr
                 <div className="space-y-3">
                   <div className="flex justify-between text-[#666666]">
                     <span>Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>₹{subtotal.toFixed(0)}</span>
                   </div>
                   
                   <div className="flex justify-between text-[#666666]">
@@ -270,21 +270,21 @@ export function CartPage({ items, onUpdateItem, onContinueShopping }: CartPagePr
                       {deliveryFee === 0 ? (
                         <span className="text-[#6EC18E] font-medium">FREE</span>
                       ) : (
-                        <span>${deliveryFee.toFixed(2)}</span>
+                        <span>₹{deliveryFee}</span>
                       )}
                     </div>
                   </div>
                   
                   {deliveryFee > 0 && (
                     <p className="text-xs text-[#666666]">
-                      Free delivery on orders over $50
+                      Free delivery on orders over ₹4000
                     </p>
                   )}
                   
                   {discount > 0 && (
                     <div className="flex justify-between text-[#6EC18E]">
                       <span>Discount</span>
-                      <span>-${discount.toFixed(2)}</span>
+                      <span>-₹{discount.toFixed(0)}</span>
                     </div>
                   )}
                   
@@ -298,7 +298,7 @@ export function CartPage({ items, onUpdateItem, onContinueShopping }: CartPagePr
                       animate={{ scale: 1 }}
                       transition={{ duration: 0.2 }}
                     >
-                      ${total.toFixed(2)}
+                      ₹{total.toFixed(0)}
                     </motion.span>
                   </div>
                 </div>
